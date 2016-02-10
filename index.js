@@ -5,16 +5,16 @@ var PLUGIN_NAME = 'gulp-jsclosure';
 
 module.exports = function (options) {
   var newline = gutil.linefeed;
-  var params = {};
+  var params = [];
 
   if (Array.isArray(options)) {
-    options.forEach(function (p) {
-      params[p] = p;        
-    });
+    params = options;
   } else if (typeof options === "object") {
     for (var i in options) {
       if (options.hasOwnProperty(i)) {
-        params[i] = options[i];
+        if (options[i]) {
+          params.push(i);
+        }
       }
     }
   } 
@@ -23,10 +23,10 @@ module.exports = function (options) {
    * it will build the javascript closure around the file and it will pass the file
    * down the chain.
    * 
-   * @param  {Object} params [An paramValue:paramName-object]
+   * @param  {Array} paramsArray [An array of parameters to be passed into the closure]
    * @return {Function} []
    */
-   var buildClosure = function(params) {
+   var buildClosure = function(paramsArray) {
     /**
      * This function is returned by buildClosure and is the meat of the entire application
      * It will verify that the file being passed into the function is A) not null and B) 
@@ -49,19 +49,10 @@ module.exports = function (options) {
       }
 
       if (file.isBuffer()) {
-        var paramNames = [];
-        var paramValues = [];
-        for (var p in params) {
-          if (params.hasOwnProperty(p)) {
-            paramValues.push(p);
-            paramNames.push(params[p])
-          }
-        }
-
         file.contents = Buffer.concat([
-          new Buffer(";(function(" + paramNames.join(", ") + ") {" + newline),
+          new Buffer(";(function(" + paramsArray.join(", ") + ") {" + newline),
           file.contents,
-          new Buffer(newline + "})(" + paramValues.join(", ") + ");")
+          new Buffer(newline + "})(" + paramsArray.join(", ") + ");")
           ]);
       }
 

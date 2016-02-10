@@ -98,8 +98,8 @@
       });
 
       // Tests
-      it('Return file with closure (1 param) - closure({window:window})', function (done) {
-        var stream = closure({window:'window'});
+      it('Return file with closure (1 param) - closure({window:true})', function (done) {
+        var stream = closure({window:true});
         var outFile = fs.readFileSync('./test/outputFiles/2.js', 'utf8');
         var expectedFile = new gutil.File({
           contents: new Buffer(outFile)
@@ -112,23 +112,9 @@
         done();
       });
 
-      it('Return file with closure (2 params) - closure({window:window, document:document})', function (done) {
-        var stream = closure({window:'window', document:'document'});
+      it('Return file with closure (2 params) - closure({window:true, document:true})', function (done) {
+        var stream = closure({window:true, document:true});
         var outFile = fs.readFileSync('./test/outputFiles/3.js', 'utf8');
-        var expectedFile = new gutil.File({
-          contents: new Buffer(outFile)
-        });
-        stream.on('data', function(processedFile) {
-          expect(String(processedFile.contents)).to.equal(String(expectedFile.contents));
-        });
-        stream.write(testFile);
-        stream.end();
-        done();
-      });
-
-      it('Return file with closure (1 param) - closure({jQuery:\'$\'})', function (done) {
-        var stream = closure({jQuery:'$'});
-        var outFile = fs.readFileSync('./test/outputFiles/4.js', 'utf8');
         var expectedFile = new gutil.File({
           contents: new Buffer(outFile)
         });
